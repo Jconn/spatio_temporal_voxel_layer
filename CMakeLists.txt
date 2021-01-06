@@ -39,7 +39,7 @@ remove_definitions(-DDISABLE_LIBUSB-1.0)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system thread)
 
-find_package(PCL EXACT 1.8.1 REQUIRED PATHS /home/mekaworks2/meka_foxy_ws/src/mekaworks/pcl/install NO_DEFAULT_PATH COMPONENTS filters common )
+find_package(PCL EXACT 1.11.1.99 COMPONENTS filters common )
 if(NOT "${PCL_LIBRARIES}" STREQUAL "")
   # This package fails to build on Debian Stretch with a linking error against
   # 'Qt5::Widgets'.  This is a transitive dependency that comes in to PCL via
