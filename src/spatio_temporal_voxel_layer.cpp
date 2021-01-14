@@ -277,7 +277,7 @@ void SpatioTemporalVoxelLayer::onInitialize(void)
     }
 
     rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_sensor_data;
-    custom_qos_profile.depth = 50;
+    custom_qos_profile.depth = 3;
 
     // create a callback for the topic
     if (data_type == "LaserScan") {
@@ -287,7 +287,7 @@ void SpatioTemporalVoxelLayer::onInitialize(void)
 
       std::shared_ptr<tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>
       > filter(new tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>(
-          *sub, *tf_, _global_frame, 50, rclcpp_node_));
+          *sub, *tf_, _global_frame, 3, rclcpp_node_));
 
       if (inf_is_valid) {
         filter->registerCallback(
@@ -310,7 +310,7 @@ void SpatioTemporalVoxelLayer::onInitialize(void)
 
       std::shared_ptr<tf2_ros::MessageFilter<sensor_msgs::msg::PointCloud2>
       > filter(new tf2_ros::MessageFilter<sensor_msgs::msg::PointCloud2>(
-          *sub, *tf_, _global_frame, 50, rclcpp_node_));
+          *sub, *tf_, _global_frame, 3, rclcpp_node_));
       filter->registerCallback(
         std::bind(&SpatioTemporalVoxelLayer::PointCloud2Callback, this, _1,
         _observation_buffers.back()));
