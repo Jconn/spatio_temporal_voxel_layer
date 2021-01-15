@@ -154,7 +154,7 @@ void SpatioTemporalVoxelLayer::onInitialize(void)
     _voxel_size, static_cast<double>(default_value_), _decay_model,
     _voxel_decay, _publish_voxels, _clock);
   matchSize();
-  current_ = true;
+  current_ = false;
   RCLCPP_INFO(logger,
     "%s created underlying voxel grid.", getName().c_str());
 
@@ -255,6 +255,10 @@ void SpatioTemporalVoxelLayer::onInitialize(void)
       throw std::runtime_error(
               "Only topics that use pointclouds or laser scans are supported.");
     }
+
+    RCLCPP_WARN(logger,
+      "pushing expeced update rate %f into observation buffer of topic %s",
+      expected_update_rate, topic.c_str());
 
     // create an observation buffer
     _observation_buffers.push_back(
@@ -453,7 +457,7 @@ bool SpatioTemporalVoxelLayer::GetMarkingObservations(
   for (unsigned int i = 0; i != _marking_buffers.size(); ++i) {
     _marking_buffers[i]->Lock();
     _marking_buffers[i]->GetReadings(marking_observations);
-    current = _marking_buffers[i]->UpdatedAtExpectedRate();
+    current &= _marking_buffers[i]->UpdatedAtExpectedRate();
     _marking_buffers[i]->Unlock();
   }
   marking_observations.insert(marking_observations.end(),
@@ -471,7 +475,7 @@ bool SpatioTemporalVoxelLayer::GetClearingObservations(
   for (unsigned int i = 0; i != _clearing_buffers.size(); ++i) {
     _clearing_buffers[i]->Lock();
     _clearing_buffers[i]->GetReadings(clearing_observations);
-    current = _clearing_buffers[i]->UpdatedAtExpectedRate();
+    current &= _clearing_buffers[i]->UpdatedAtExpectedRate();
     _clearing_buffers[i]->Unlock();
   }
   return current;
@@ -559,7 +563,7 @@ void SpatioTemporalVoxelLayer::reset(void)
   // reset layer
   Costmap2D::resetMaps();
   this->ResetGrid();
-  current_ = true;
+  current_ = false;
   observation_buffers_iter it = _observation_buffers.begin();
   for (; it != _observation_buffers.end(); ++it) {
     (*it)->ResetLastUpdatedTime();

@@ -60,8 +60,8 @@ MeasurementBuffer::MeasurementBuffer(
   const int & voxel_min_points, const bool & enabled,
   const bool & clear_buffer_after_reading, const ModelType & model_type,
   rclcpp::Clock::SharedPtr clock, rclcpp::Logger logger)
-: _buffer(tf), _observation_keep_time(observation_keep_time),
-  _expected_update_rate(expected_update_rate), _last_updated(clock->now()),
+: _buffer(tf), _observation_keep_time(observation_keep_time*1e9),
+  _expected_update_rate(expected_update_rate*1e9), _last_updated(clock->now()),
   _global_frame(global_frame), _sensor_frame(sensor_frame),
   _topic_name(topic_name), _min_obstacle_height(min_obstacle_height),
   _max_obstacle_height(max_obstacle_height), _obstacle_range(obstacle_range),
@@ -238,7 +238,7 @@ bool MeasurementBuffer::ClearAfterReading(void)
 bool MeasurementBuffer::UpdatedAtExpectedRate(void) const
 /*****************************************************************************/
 {
-  if (_expected_update_rate == rclcpp::Duration(0.0)) {
+  if (_expected_update_rate.nanoseconds() == rclcpp::Duration(0.0).nanoseconds()) {
     return true;
   }
 
